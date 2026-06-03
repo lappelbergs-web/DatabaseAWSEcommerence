@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.title}">Product Details</title>
+    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="site-header">
+    <nav class="site-nav">
+        <strong class="brand">CloudStore</strong>
+
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+
+        <a sec:authorize="isAuthenticated()" href="/cart">Cart</a>
+        <a sec:authorize="isAuthenticated()" href="/orders">Orders</a>
+
+        <a sec:authorize="isAnonymous()" href="/login">Login</a>
+        <a sec:authorize="isAnonymous()" href="/register">Register</a>
+
+        <form sec:authorize="isAuthenticated()" class="nav-form" th:action="@{/logout}" method="post">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <img th:src="${product.image}" th:alt="${product.title}" class="product-detail-image">
+
+        <h1 th:text="${product.title}">Product title</h1>
+        <p th:text="${product.category}">Category</p>
+        <p th:text="${product.description}">Description</p>
+
+        <p class="price">
+            $<span th:text="${product.price}">0.00</span>
+        </p>
+
+        <form class="order-form" th:action="@{/cart/items}" method="post">
+            <input type="hidden" name="productId" th:value="${product.id}">
+
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input id="quantity" name="quantity" type="number" min="1" value="1" required>
+            </div>
+
+            <button class="button" type="submit">Add to Cart</button>
+        </form>
+
+        <a class="button secondary-button" href="/products">Back to Products</a>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Cart - CloudStore</title>
+    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="site-header">
+    <nav class="site-nav">
+        <strong class="brand">CloudStore</strong>
+
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+
+        <a sec:authorize="isAuthenticated()" href="/cart">Cart</a>
+        <a sec:authorize="isAuthenticated()" href="/orders">Orders</a>
+
+        <a sec:authorize="isAnonymous()" href="/login">Login</a>
+        <a sec:authorize="isAnonymous()" href="/register">Register</a>
+
+        <form sec:authorize="isAuthenticated()" class="nav-form" th:action="@{/logout}" method="post">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <h1>Shopping Cart</h1>
+
+        <p th:if="${items.isEmpty()}">Your cart is empty.</p>
+
+        <div class="cart-list" th:if="${!items.isEmpty()}">
+            <article class="cart-item" th:each="item : ${items}">
+                <img th:src="${item.image}" th:alt="${item.productTitle}">
+
+                <div>
+                    <h2 th:text="${item.productTitle}">Product title</h2>
+                    <p>
+                        Quantity:
+                        <span th:text="${item.quantity}">1</span>
+                    </p>
+                    <p>
+                        Price:
+                        $<span th:text="${item.productPrice}">0.00</span>
+                    </p>
+                    <p>
+                        Line total:
+                        $<span th:text="${item.lineTotal}">0.00</span>
+                    </p>
+
+                    <form th:action="@{/cart/items/{productId}/remove(productId=${item.productId})}" method="post">
+                        <button class="button danger-button" type="submit">Remove</button>
+                    </form>
+                </div>
+            </article>
+        </div>
+
+        <div class="cart-checkout" th:if="${!items.isEmpty()}">
+            <p class="price">
+                Total:
+                $<span th:text="${totalPrice}">0.00</span>
+            </p>
+
+            <form class="order-form" th:action="@{/cart/checkout}" method="post">
+                <button class="button" type="submit">Checkout</button>
+            </form>
+        </div>
+
+        <a class="button secondary-button" href="/products">Continue Shopping</a>
+    </section>
+</main>
+</body>
+</html>

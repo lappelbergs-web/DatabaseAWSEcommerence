@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - CloudStore</title>
+    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="site-header">
+    <nav class="site-nav">
+        <strong class="brand">CloudStore</strong>
+
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+
+        <a sec:authorize="isAuthenticated()" href="/cart">Cart</a>
+        <a sec:authorize="isAuthenticated()" href="/orders">Orders</a>
+
+        <a sec:authorize="isAnonymous()" href="/login">Login</a>
+        <a sec:authorize="isAnonymous()" href="/register">Register</a>
+
+        <form sec:authorize="isAuthenticated()" class="nav-form" th:action="@{/logout}" method="post">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <h1>Create Account</h1>
+
+        <form class="order-form" th:action="@{/register}" th:object="${user}" method="post">
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input id="fullName" th:field="*{fullName}" type="text">
+                <p class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">
+                    Full name error
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input id="email" th:field="*{email}" type="email">
+                <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+                    Email error
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" th:field="*{password}" type="password">
+                <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                    Password error
+                </p>
+            </div>
+
+            <button class="button" type="submit">Create Account</button>
+        </form>
+
+        <p>
+            Already have an account?
+            <a href="/login">Login here</a>
+        </p>
+    </section>
+</main>
+</body>
+</html>

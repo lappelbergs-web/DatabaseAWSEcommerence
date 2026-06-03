@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Orders - CloudStore</title>
+    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="site-header">
+    <nav class="site-nav">
+        <strong class="brand">CloudStore</strong>
+
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+
+        <a sec:authorize="isAuthenticated()" href="/cart">Cart</a>
+        <a sec:authorize="isAuthenticated()" href="/orders">Orders</a>
+
+        <a sec:authorize="isAnonymous()" href="/login">Login</a>
+        <a sec:authorize="isAnonymous()" href="/register">Register</a>
+
+        <form sec:authorize="isAuthenticated()" class="nav-form" th:action="@{/logout}" method="post">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <h1>Order History</h1>
+
+        <h2>
+            Orders for <span th:text="${user.email}">user@example.com</span>
+        </h2>
+
+        <p th:if="${orders.isEmpty()}">No orders found.</p>
+
+        <section class="order-history-list" th:if="${!orders.isEmpty()}">
+            <article class="order-history-card" th:each="order : ${orders}">
+                <div class="order-summary">
+                    <p>
+                        Order ID:
+                        <strong th:text="${order.orderId}">1</strong>
+                    </p>
+
+                    <p>
+                        Status:
+                        <strong th:text="${order.status}">CREATED</strong>
+                    </p>
+
+                    <p>
+                        Total:
+                        $<strong th:text="${order.totalPrice}">0.00</strong>
+                    </p>
+
+                    <p>
+                        Created:
+                        <strong th:text="${order.createdAt}">Date</strong>
+                    </p>
+                </div>
+
+                <h3>Items</h3>
+
+                <ul class="order-items">
+                    <li th:each="item : ${order.items}">
+                        <span th:text="${item.productTitle}">Product</span>
+                        -
+                        Quantity:
+                        <span th:text="${item.quantity}">1</span>
+                        -
+                        Price:
+                        $<span th:text="${item.productPrice}">0.00</span>
+                    </li>
+                </ul>
+            </article>
+        </section>
+    </section>
+</main>
+</body>
+</html>

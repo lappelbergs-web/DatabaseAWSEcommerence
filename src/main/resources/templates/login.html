@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - CloudStore</title>
+    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="site-header">
+    <nav class="site-nav">
+        <strong class="brand">CloudStore</strong>
+
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+
+        <a sec:authorize="isAuthenticated()" href="/cart">Cart</a>
+        <a sec:authorize="isAuthenticated()" href="/orders">Orders</a>
+
+        <a sec:authorize="isAnonymous()" href="/login">Login</a>
+        <a sec:authorize="isAnonymous()" href="/register">Register</a>
+
+        <form sec:authorize="isAuthenticated()" class="nav-form" th:action="@{/logout}" method="post">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <h1>Login</h1>
+
+        <p th:if="${param.error}">Invalid email or password.</p>
+        <p th:if="${param.logout}">You have been logged out.</p>
+
+        <form class="order-form" th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input id="username" name="username" type="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" required>
+            </div>
+
+            <button class="button" type="submit">Login</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

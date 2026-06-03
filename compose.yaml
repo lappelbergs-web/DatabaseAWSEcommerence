@@ -1,0 +1,38 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: cloudstore-mysql
+    environment:
+      MYSQL_DATABASE: cloudstore_db
+      MYSQL_USER: cloudstore_user
+      MYSQL_PASSWORD: cloudstore_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "cloudstore_user", "-pcloudstore_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    image: cloudstore
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cloudstore-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/cloudstore_db
+      DB_USERNAME: cloudstore_user
+      DB_PASSWORD: cloudstore_password
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql_data:

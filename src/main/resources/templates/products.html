@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Products - CloudStore</title>
+    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="site-header">
+    <nav class="site-nav">
+        <strong class="brand">CloudStore</strong>
+
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+
+        <a sec:authorize="isAuthenticated()" href="/cart">Cart</a>
+        <a sec:authorize="isAuthenticated()" href="/orders">Orders</a>
+
+        <a sec:authorize="isAnonymous()" href="/login">Login</a>
+        <a sec:authorize="isAnonymous()" href="/register">Register</a>
+
+        <form sec:authorize="isAuthenticated()" class="nav-form" th:action="@{/logout}" method="post">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <div class="page-heading">
+        <p class="eyebrow">Shop the catalog</p>
+        <h1>Products</h1>
+    </div>
+
+    <section class="product-grid">
+        <article class="product-card" th:each="product : ${products}">
+            <img th:src="${product.image}" th:alt="${product.title}">
+            <h2 th:text="${product.title}">Product title</h2>
+            <p class="category" th:text="${product.category}">Category</p>
+            <p class="price">
+                $<span th:text="${product.price}">0.00</span>
+            </p>
+            <a class="button" th:href="@{/products/{id}(id=${product.id})}">
+                View Product
+            </a>
+        </article>
+    </section>
+</main>
+</body>
+</html>
