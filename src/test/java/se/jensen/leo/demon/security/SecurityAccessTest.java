@@ -1,5 +1,7 @@
 package se.jensen.leo.demon.security;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -19,6 +21,9 @@ import se.jensen.leo.demon.service.CartService;
 import se.jensen.leo.demon.service.OrderService;
 import se.jensen.leo.demon.service.ProductService;
 import se.jensen.leo.demon.service.UserService;
+import se.jensen.leo.demon.model.Product;
+
+
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -102,6 +107,45 @@ class SecurityAccessTest {
                         .with(user("test@example.com").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(view().name("cart"));
+    }
+
+    @Test
+    void productDetailsShouldShowLoginToAddToCartWhenAnonymous() throws Exception {
+        Product product = Product.builder()
+                .id(1L)
+                .title("Test Product")
+                .price(new BigDecimal("10.00"))
+                .description("Test description")
+                .category("test")
+                .image("image.jpg")
+                .build();
+
+        when(productService.findById(1L)).thenReturn(product);
+
+        mockMvc.perform(get("/products/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("product-details"))
+                .andExpect(content().string(containsString("Login to Add to Cart")));
+    }
+
+    @Test
+    void productDetailsShouldShowAddToCartWhenAuthenticated() throws Exception {
+        Product product = Product.builder()
+                .id(1L)
+                .title("Test Product")
+                .price(new BigDecimal("10.00"))
+                .description("Test description")
+                .category("test")
+                .image("image.jpg")
+                .build();
+
+        when(productService.findById(1L)).thenReturn(product);
+
+        mockMvc.perform(get("/products/1")
+                        .with(user("test@example.com").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("product-details"))
+                .andExpect(content().string(containsString("Add to Cart")));
     }
 
     static class TestSecurityConfig {

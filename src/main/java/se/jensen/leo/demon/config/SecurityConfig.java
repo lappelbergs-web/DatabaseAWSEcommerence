@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import se.jensen.leo.demon.repository.UserRepository;
 import se.jensen.leo.demon.service.CustomUserDetailsService;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
@@ -35,11 +36,11 @@ public class SecurityConfig {
                                 "/register",
                                 "/api/products",
                                 "/api/products/**",
-                                "/api/users",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
